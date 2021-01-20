@@ -1,1 +1,5 @@
-# The default keymap for bm60rgb_iso
+# Personnal keymap for BM60 RGB
+
+## TODO
+
+- [ ] Find reasonable macro for bottom row keys.

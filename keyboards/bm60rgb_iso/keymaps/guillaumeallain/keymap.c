@@ -15,115 +15,96 @@
  */
 #include QMK_KEYBOARD_H
 
+uint16_t mod_state;
+uint16_t oneshot_mod_state;
+
 enum custom_keycodes {
-    CTL_UP = SAFE_RANGE,
-    CTL_DOWN,
-    CTL_LEFT,
-    CTL_RIGHT,
-    GUI_TAB,
-    GUI_STAB,
-    SPOTLIGHT
+    CM_SCOL = SAFE_RANGE,
+    CH_WIND
 };
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+    mod_state = get_mods();
+    oneshot_mod_state = get_oneshot_mods();
+
     switch (keycode) {
-    case CTL_UP:
-        if (record->event.pressed) {
-            register_code(KC_LCTL) ;
-            register_code(KC_UP);
-        } else {
-            unregister_code(KC_LCTL);
-            unregister_code(KC_UP);
-        }
-        break;
-    case CTL_DOWN:
-        if (record->event.pressed) {
-            register_code(KC_LCTL) ;
-            register_code(KC_DOWN);
-        } else {
-            unregister_code(KC_LCTL);
-            unregister_code(KC_DOWN);
-        }
-        break;
-    case CTL_LEFT:
-        if (record->event.pressed) {
-            register_code(KC_LCTL) ;
-            register_code(KC_LEFT);
-        } else {
-            unregister_code(KC_LCTL);
-            unregister_code(KC_LEFT);
-        }
-        break;
-    case CTL_RIGHT:
-        if (record->event.pressed) {
-            register_code(KC_LCTL) ;
-            register_code(KC_RIGHT);
-        } else {
-            unregister_code(KC_LCTL);
-            unregister_code(KC_RIGHT);
-        }
-        break;
-    case GUI_TAB:
-        if (record->event.pressed) {
-            register_code(KC_LGUI) ;
-            register_code(KC_TAB);
+
+    case CH_WIND:
+        if (record->event.pressed){
+            register_code(KC_LGUI);
+            tap_code(KC_TAB);
+            layer_on(1);
         } else {
             unregister_code(KC_LGUI);
-            unregister_code(KC_TAB);
+            layer_off(1);
         }
         break;
-    case GUI_STAB:
-        if (record->event.pressed) {
-            register_code(KC_LGUI) ;
-            register_code(KC_LSFT) ;
-            register_code(KC_TAB);
-        } else {
-            unregister_code(KC_LGUI);
-            unregister_code(KC_LSFT) ;
-            unregister_code(KC_TAB);
-        }
-        break;
-    case SPOTLIGHT:
-        if (record->event.pressed) {
-            register_code(KC_LGUI) ;
-            register_code(KC_SPACE) ;
-        } else {
-            unregister_code(KC_LGUI) ;
-            unregister_code(KC_SPACE) ;
-        }
-        break;
+    case CM_SCOL:
+                /* from https://github.com/precondition/dactyl-manuform-keymap */
+                 {
+                     static bool sclkey_registered;
+                     static bool sslkey_registered;
+                     if (record->event.pressed) {
+                         if (mod_state & MOD_MASK_CTRL) {
+                             // In case only one shift is held
+                             // see https://stackoverflow.com/questions/1596668/logical-xor-operator-in-c
+                             // This also means that in case of holding both shifts and pressing KC_BSPC,
+                             // Shift+Delete is sent (useful in Firefox) since the shift modifiers aren't deleted.
+                             del_mods(MOD_MASK_CTRL);
+                             register_code16(KC_COLN);
+                             sclkey_registered = true;
+                             set_mods(mod_state);
+                             return false;
+                         } else if (mod_state & MOD_MASK_ALT) {
+                             // In case only one shift is held
+                             // see https://stackoverflow.com/questions/1596668/logical-xor-operator-in-c
+                             // This also means that in case of holding both shifts and pressing KC_BSPC,
+                             // Shift+Delete is sent (useful in Firefox) since the shift modifiers aren't deleted.
+                             del_mods(MOD_MASK_ALT);
+                             register_code16(LSFT(KC_NUBS));
+                             sslkey_registered = true;
+                             set_mods(mod_state);
+                             return false;
+                         } else {
+                             register_code(KC_SCLN);
+                         }
+                     } else {
+                         if (sclkey_registered) {
+                             unregister_code16(KC_COLN);
+                             sclkey_registered = false;
+                             return false;
+                         } else if (sslkey_registered){
+                             unregister_code16(LSFT(KC_NUBS));
+                             sslkey_registered = false;
+                             return false;
+                         } else {
+                             unregister_code(KC_SCLN);
+                         }
+                     }
+                     return true;
+                 }
     }
     return true;
 };
 
-/* enum combo_events { */
-/*   ctldotcomma_dotdot, */
-/* }; */
-/*  */
-/* const uint16_t PROGMEM dotdot_combo[] = {KC_LCTL, KC_SCLN, COMBO_END}; */
-/*  */
-/* combo_t key_combos[COMBO_COUNT] = { */
-/*   [ctldotcomma_dotdot] = COMBO_ACTION(dotdot_combo), */
-/* }; */
-/*  */
-/* void process_combo_event(uint16_t combo_index, bool pressed) { */
-/*   switch(combo_index) { */
-/*     case ctldotcomma_dotdot: */
-/*       if (pressed) { */
-/*         send_string(":"); */
-/*       } */
-/*       break; */
-/*   } */
-/* } */
-
+bool get_ignore_mod_tap_interrupt(uint16_t keycode, keyrecord_t *record) {
+    switch (keycode) {
+        case LCTL_T(KC_ESC):
+            return false;
+        case LALT_T(KC_TAB):
+            return false;
+        default:
+            return true;
+    }
+}
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [0] = LAYOUT_60_iso_arrow(
         LT(2,KC_NUBS),   KC_1,           KC_2,    KC_3,          KC_4,          KC_5,    KC_6,    KC_7,    KC_8,    KC_9,    KC_0,    KC_MINS,         KC_EQL,  KC_BSPC,
         LALT_T(KC_TAB),  KC_Q,           KC_W,    KC_E,          KC_R,          KC_T,    KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,    KC_LBRC,         KC_RBRC,
-        LCTL_T(KC_ESC),  KC_A,           KC_S,    LT(1, KC_D),   LT(2,KC_F),    KC_G,    KC_H,    KC_J,    KC_K,    KC_L,    KC_SCLN, KC_QUOT,         KC_NUHS, KC_SFTENT,
-        KC_LSFT,         KC_GRV,         KC_Z,    KC_X,          KC_C,          KC_V,    KC_B,    KC_N,    KC_M,    KC_COMM, KC_DOT,  RGUI_T(KC_SLSH), KC_UP,   KC_RSFT,
-        KC_LGUI,         MO(1),          KC_LGUI,                               KC_SPC,                             MO(1),   MO(1),   KC_LEFT,         KC_DOWN, KC_RGHT
+        LCTL_T(KC_ESC),  KC_A,           KC_S,    LT(1, KC_D),   LT(2,KC_F),    KC_G,    KC_H,    KC_J,    KC_K,    KC_L,    CM_SCOL, KC_QUOT,         KC_NUHS, KC_SFTENT,
+        KC_LSFT,         KC_GRV,         KC_Z,    KC_X,          KC_C,          KC_V,    KC_B,    KC_N,    KC_M,    KC_COMM, KC_DOT,  KC_SLSH,         KC_UP,  KC_RSFT,
+        CH_WIND,         MO(1),          CH_WIND,                               LGUI_T(KC_SPC),                     MO(1),   _______, KC_RGUI,         KC_DOWN, KC_RGHT
     ),
     [1] = LAYOUT_60_iso_arrow(
         _______,   KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,   KC_F6,   KC_F7,   KC_F8,   KC_F9,   KC_F10,  KC_F11,  KC_F12,  RESET,
@@ -133,10 +114,10 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         _______, _______, _______,                            _______,                   _______,  _______, KC_HOME, KC_PGDN, KC_END
     ),
     [2] = LAYOUT_60_iso_arrow(
-        _______, _______, _______, _______, _______, _______, _______,  KC_MPRV,  KC_MPLY, KC_MNXT,   KC_MUTE, KC_VOLD, KC_VOLU, _______,
-        _______, _______, _______, _______, _______, _______, _______,  _______,  _______, _______,   GUI_STAB, _______, _______,
-        _______, _______, _______, _______, _______, _______, CTL_LEFT, CTL_DOWN, CTL_UP,  CTL_RIGHT, _______, _______, _______, _______,
-        _______, _______, _______, _______, _______, _______, _______,  GUI_TAB,  _______, _______,   _______, _______, _______, _______,
-        _______, _______, _______,                            SPOTLIGHT,                   _______,   _______, _______, _______, _______
+        _______, _______, _______, _______, _______, _______, _______,       KC_MPRV,        KC_MPLY,       KC_MNXT,        KC_MUTE, KC_VOLD, KC_VOLU, KC_SLEP,
+        _______, _______, _______, _______, _______, _______, _______,       _______,        _______,       _______,        _______, _______, _______,
+        _______, _______, _______, _______, _______, _______, LCTL(KC_LEFT), LCTL(KC_DOWN),  LCTL(KC_UP),   LCTL(KC_RIGHT), _______, _______, _______, _______,
+        _______, _______, _______, _______, _______, _______, _______,       _______,        _______,       _______,        _______, _______, _______, _______,
+        _______, _______, _______,                            LGUI(KC_SPC),                                 _______,        _______, _______, _______, _______
     ),
 };

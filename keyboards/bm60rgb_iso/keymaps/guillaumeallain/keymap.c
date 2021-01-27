@@ -18,14 +18,6 @@
 uint16_t mod_state;
 uint16_t oneshot_mod_state;
 
-/* enum unicode_names { */
-/*     UBSL, */
-/* }; */
-/*  */
-/* const uint32_t PROGMEM unicode_map[] = { */
-/*     [UBSL]  = 0x005C,  // ‽ */
-/* }; */
-
 enum custom_keycodes {
     CM_SCOL = SAFE_RANGE,
     CH_WIND
@@ -54,15 +46,16 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                      static bool sslkey_registered;
                      if (record->event.pressed) {
                          if (mod_state & MOD_MASK_CTRL) {
+
                              del_mods(MOD_MASK_CTRL);
-                             /* send_unicode_string(":"); */
+                             register_code16(KC_COLN);
                              sclkey_registered = true;
                              set_mods(mod_state);
                              return false;
                          } else if (mod_state & MOD_MASK_ALT) {
+
                              del_mods(MOD_MASK_ALT);
-                             /* register_code16(X(UBSL)); */
-                             send_unicode_hex_string("005C");
+                             register_code16(LSFT(KC_NUBS));
                              sslkey_registered = true;
                              set_mods(mod_state);
                              return false;
@@ -71,10 +64,11 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                          }
                      } else {
                          if (sclkey_registered) {
+                             unregister_code16(KC_COLN);
                              sclkey_registered = false;
                              return false;
                          } else if (sslkey_registered){
-                             /* unregister_code16(X(UBSL)); */
+                             unregister_code16(LSFT(KC_NUBS));
                              sslkey_registered = false;
                              return false;
                          } else {
@@ -122,9 +116,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     ),
     [3] = LAYOUT_60_iso_arrow(
         _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______,
-        _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, 
-        _______, _______, _______, _______, KC_LPRN, KC_RPRN, _______, _______, _______, _______, _______, _______, _______, _______,
-        _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______,
+        _______, _______, _______, A(KC_7), A(KC_8), _______, _______, _______, _______, _______, _______, _______, _______, 
+        _______, _______, _______, KC_LPRN, KC_RPRN, _______,  _______, _______, _______, _______, _______, _______, _______, _______,
+        _______, _______, _______, _______, A(KC_9), A(KC_0), _______, _______, _______, _______, _______, _______, _______, _______,
         _______, _______, _______,                            _______,                   _______, _______, _______, _______, _______
     ),
     [4] = LAYOUT_60_iso_arrow(

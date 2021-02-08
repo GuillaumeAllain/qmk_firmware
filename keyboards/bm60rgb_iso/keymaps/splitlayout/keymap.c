@@ -148,14 +148,14 @@ bool get_ignore_mod_tap_interrupt(uint16_t keycode, keyrecord_t *record) {
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [0] = LAYOUT_60_iso_arrow(
         LT(2,KC_NUBS),   KC_1,   KC_2,    KC_3,        KC_4,       KC_5,    KC_6,    KC_7,   KC_8,         KC_9,      KC_0,    KC_MINS,          KC_EQL,      KC_BSPC,
-        LALT_T(KC_TAB),  KC_Q,   KC_W,    KC_E,        KC_R,       KC_T,    KC_LBRC, KC_RBRC,KC_Y,         LT(4,KC_U),KC_I,    KC_O,             RCTL_T(KC_P),    
+        LALT_T(KC_TAB),  KC_Q,   KC_W,    KC_E,        KC_R,       KC_T,    KC_LBRC, KC_RBRC,LT(1,KC_Y),   LT(4,KC_U),KC_I,    KC_O,             RCTL_T(KC_P),    
         LCTL_T(KC_ESC),  KC_A,   KC_S,    LT(1, KC_D), LT(2,KC_F), KC_G,    KC_NUHS, SP_ACC ,KC_H,         KC_J,      KC_K,    KC_L,             CM_SCOL,     KC_SFTENT,
         KC_LSFT,         KC_GRV, KC_Z,    KC_X,        KC_C,       KC_V,    KC_B,    KC_DOT, LT(3,KC_COMM),KC_N,      KC_M,    KC_DOT,           SP_ACC,      KC_RSFT,
         LGUI(LSFT(KC_A)),LGUI(LCTL(KC_Q)),CH_WIND,                          LGUI_T(KC_SPC),                MO(1),     KC_RGUI, LGUI(LSFT(KC_4)), KC_DOWN,     KC_RGHT
     ),
     [1] = LAYOUT_60_iso_arrow(
         _______, KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,   KC_F6,   KC_F7,   KC_F8,   KC_F9,   KC_F10,  KC_F11,  KC_F12,  RESET,
-        _______, _______, _______, _______, _______, _______, _______, _______, _______, KC_GRV,  _______, _______, _______,
+        _______, KC_NUBS, _______, _______, _______, _______, _______, _______, _______, KC_GRV,  _______, _______, _______,
         _______, _______, _______, _______, _______, _______, _______, _______, KC_LEFT, KC_DOWN, KC_UP,   KC_RGHT, _______, _______,
         _______, _______, _______, _______, KC_RBRC, _______, _______, _______, _______, _______, _______, _______, KC_PGUP, _______,
         _______, _______, _______,                            _______,                   _______, _______, KC_HOME, KC_PGDN, KC_END
@@ -176,9 +176,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     ),
     [4] = LAYOUT_60_iso_arrow(
         _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______,
-        _______, _______, KC_1,    KC_2,    KC_3,    _______, _______, _______, _______, _______, _______, _______, _______,
-        _______, _______, KC_4,    KC_5,    KC_6,    _______, _______, _______, _______, _______, _______, _______, _______, _______,
-        _______, _______, _______, KC_7,    KC_8,    KC_9,    _______, _______, _______, _______, _______, _______, _______, _______,
+        _______, KC_1,    KC_2,    KC_3,    _______, _______, _______, _______, _______, _______, _______, _______, _______,
+        _______, KC_4,    KC_5,    KC_6,    _______, _______, _______, _______, _______, _______, _______, _______, _______, _______,
+        _______, _______, KC_7,    KC_8,    KC_9,    _______, _______, _______, _______, _______, _______, _______, _______, _______,
         _______, _______, _______,                            _______,                   _______, _______, _______, _______, _______
     ),
 };

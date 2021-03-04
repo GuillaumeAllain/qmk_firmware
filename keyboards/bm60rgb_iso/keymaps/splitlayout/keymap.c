@@ -147,34 +147,38 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     case CM_SCOL:
                 /* from https://github.com/precondition/dactyl-manuform-keymap */
                  {
-                     static bool sclkey_registered;
-                     static bool sslkey_registered;
+                     static bool CTLKEY_REGISTERED;
+                     static bool ALTKEY_REGISTERED;
+                     static uint16_t lcl_mod_state;
                      if (record->event.pressed) {
                          if (mod_state & MOD_MASK_CTRL) {
-
-                             del_mods(MOD_MASK_CTRL);
+                             /* del_mods(MOD_MASK_CTRL); */
+                             lcl_mod_state = mod_state;
+                             clear_mods();
                              register_code16(KC_COLN);
-                             sclkey_registered = true;
-                             /* set_mods(mod_state); */
+                             CTLKEY_REGISTERED = true;
                              return false;
-                         } else if (mod_state & MOD_MASK_ALT) {
-
-                             del_mods(MOD_MASK_ALT);
-                             register_code16(LSFT(KC_NUBS));
-                             sslkey_registered = true;
-                             /* set_mods(mod_state); */
+                         }  else if (mod_state & MOD_MASK_ALT) {
+                             /* lcl_mod_state = mod_state; */
+                             /* clear_mods(); */
+                             register_code16(KC_QUOT);
+                             ALTKEY_REGISTERED = true;
                              return false;
                          } else {
                              register_code(KC_SCLN);
                          }
                      } else {
-                         if (sclkey_registered) {
+                         if (CTLKEY_REGISTERED) {
                              unregister_code16(KC_COLN);
-                             sclkey_registered = false;
+                             CTLKEY_REGISTERED = false;
+                             /* set_mods(MOD_BIT(KC_LCTL)); */
+                             set_mods(lcl_mod_state);
                              return false;
-                         } else if (sslkey_registered){
-                             unregister_code16(LSFT(KC_NUBS));
-                             sslkey_registered = false;
+                         } else if (ALTKEY_REGISTERED) {
+                             unregister_code16(KC_QUOT);
+                             ALTKEY_REGISTERED = false;
+                             /* set_mods(MOD_BIT(KC_LALT)); */
+                             /* set_mods(lcl_mod_state); */
                              return false;
                          } else {
                              unregister_code(KC_SCLN);
@@ -250,6 +254,8 @@ uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record) {
             return 150;
         case LCTL_T(KC_ESC):
             return 100;
+        case LALT_T(KC_TAB):
+            return 100;
         default:
             return TAPPING_TERM;
     }
@@ -258,6 +264,8 @@ uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record) {
 bool get_permissive_hold(uint16_t keycode, keyrecord_t *record) {
     switch (keycode) {
         case LCTL_T(KC_ESC):
+            return false;
+        case LALT_T(KC_TAB):
             return false;
         default:
             return false;
@@ -269,6 +277,8 @@ bool get_retro_tapping(uint16_t keycode, keyrecord_t *record) {
         case LGUI_T(KC_SPACE):
             return true;
         case LCTL_T(KC_ESC):
+            return false;
+        case LALT_T(KC_TAB):
             return false;
         case TD(LSFT_OSL3):
             return false;
@@ -282,7 +292,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         LT(2,KC_NUBS),   KC_1,   KC_2,      KC_3,        KC_4,       KC_5,    KC_6,    KC_7,   KC_8,         KC_9,      KC_0,      KC_MINS,          KC_EQL,      KC_BSPC,
         LALT_T(KC_TAB),  KC_Q,   KC_W,      KC_E,        KC_R,       KC_T,    KC_LBRC, KC_RBRC,KC_Y,         KC_U,      KC_I,      KC_O,             RCTL_T(KC_P),    
         LCTL_T(KC_ESC),  KC_A,   LT(4,KC_S),LT(1, KC_D), LT(2,KC_F), KC_G,    KC_NUHS, SP_ACC ,LT(2,KC_H),   LT(1,KC_J),LT(4,KC_K),KC_L,             CM_SCOL,     KC_SFTENT,
-        TD(LSFT_OSL3),  OSL(3), KC_Z,       KC_X,        KC_C,       KC_V,    KC_B,    KC_DOT, LT(3,KC_COMM), KC_N,      KC_M,      KC_DOT,           KC_SLSH,      KC_RSFT,
+        TD(LSFT_OSL3),   OSL(3), KC_Z,      KC_X,        KC_C,       KC_V,    KC_B,    KC_DOT, LT(3,KC_COMM),KC_N,      KC_M,      KC_DOT,           KC_SLSH,      KC_RSFT,
         LGUI(LSFT(KC_A)),LGUI(LCTL(KC_Q)),  CH_WIND,                          LGUI_T(KC_SPC),                MO(1),     KC_RGUI,   LGUI(LSFT(KC_4)), KC_DOWN,     KC_RGHT
     ),
     [1] = LAYOUT_60_iso_arrow(

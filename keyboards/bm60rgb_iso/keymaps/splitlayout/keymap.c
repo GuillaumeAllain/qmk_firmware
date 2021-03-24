@@ -32,12 +32,15 @@ enum custom_keycodes {
     SP_ACC,
     KC_IHAT,
     KC_EHAT,
-    KC_OHAT
+    KC_OHAT,
+    KC_HCTL,
+    LCTLESC
 };
 
 // Tap Dance keycodes
 enum td_keycodes {
-    LSFT_OSL3 // Our example key: `LALT` when held, `(` when tapped. Add additional keycodes for each tapdance.
+    LSFT_OSL3, // Our example key: `LALT` when held, `(` when tapped. Add additional keycodes for each tapdance.
+    KC_FWIN
 };
 
 // Define a type containing as many tapdance states as you need
@@ -45,6 +48,7 @@ typedef enum {
     SINGLE_TAP,
     SINGLE_HOLD,
     DOUBLE_TAP,
+    DOUBLE_HOLD
 } td_state_t;
 
 // Create a global instance of the tapdance state type
@@ -59,7 +63,10 @@ uint8_t cur_dance(qk_tap_dance_state_t *state) {
         if (!state->pressed) return SINGLE_TAP;
         else return SINGLE_HOLD;
     }
-    else return 2; // Any number higher than the maximum state value you return above
+    else if (state->count == 2) {
+        if (state->pressed) return DOUBLE_HOLD;
+        else return DOUBLE_TAP;
+    } else return 3; // Any number higher than the maximum state value you return above
 }
 
 // Handle the possible states for each tapdance keycode you define:
@@ -73,10 +80,12 @@ void lsftosl3_finished(qk_tap_dance_state_t *state, void *user_data) {
         case SINGLE_TAP:
             set_oneshot_layer(3,ONESHOT_START);clear_oneshot_layer_state(ONESHOT_PRESSED);
             break;
-        case DOUBLE_TAP:
+        case DOUBLE_HOLD:
             register_mods(MOD_BIT(KC_LSFT)); // For a layer-tap key, use `layer_on(_MY_LAYER)` here
             set_oneshot_layer(3,ONESHOT_START);
             clear_oneshot_layer_state(ONESHOT_PRESSED);
+            break;
+        case DOUBLE_TAP:
             break;
     }
 }
@@ -88,22 +97,62 @@ void lsftosl3_reset(qk_tap_dance_state_t *state, void *user_data) {
             break;
         case SINGLE_TAP:
             break;
-        case DOUBLE_TAP:
+        case DOUBLE_HOLD:
             unregister_mods(MOD_BIT(KC_LSFT)); // For a layer-tap key, use `layer_off(_MY_LAYER)` here
+            break;
+        case DOUBLE_TAP:
+            break;
+    }
+}
+
+void kcfwin_finished(qk_tap_dance_state_t *state, void *user_data) {
+    td_state = cur_dance(state);
+    switch (td_state) {
+        case SINGLE_TAP:
+            register_code(KC_F);
+            break;
+        case SINGLE_HOLD:
+            layer_on(2);
+            break;
+        case DOUBLE_HOLD:
+            register_code16(CH_WIND);
+            break;
+        case DOUBLE_TAP:
+            break;
+    }
+}
+
+void kcfwin_reset(qk_tap_dance_state_t *state, void *user_data) {
+    switch (td_state) {
+        case SINGLE_TAP:
+            unregister_code(KC_F);
+            break;
+        case SINGLE_HOLD:
+            layer_off(2);
+            break;
+        case DOUBLE_HOLD:
+            unregister_code16(CH_WIND);
+            break;
+        case DOUBLE_TAP:
             break;
     }
 }
 
 // Define `ACTION_TAP_DANCE_FN_ADVANCED()` for each tapdance keycode, passing in `finished` and `reset` functions
 qk_tap_dance_action_t tap_dance_actions[] = {
-    [LSFT_OSL3] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, lsftosl3_finished, lsftosl3_reset)
+    [LSFT_OSL3] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, lsftosl3_finished, lsftosl3_reset),
+    [KC_FWIN] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, kcfwin_finished, kcfwin_reset)
 };
 
 // `finished` and `reset` functions for each tapdance keycode
 void lsftosl3_finished(qk_tap_dance_state_t *state, void *user_data);
 void lsftosl3_reset(qk_tap_dance_state_t *state, void *user_data);
+void kcfwin_finished(qk_tap_dance_state_t *state, void *user_data);
+void kcfwin_reset(qk_tap_dance_state_t *state, void *user_data);
 
 
+uint16_t key_timer;
+static bool CTLKEY_RESET;
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     mod_state = get_mods();
     oneshot_mod_state = get_oneshot_mods();
@@ -144,18 +193,70 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             layer_off(1);
         }
         break;
+
+    case LCTLESC:
+        {
+            if (record->event.pressed){
+                key_timer = timer_read();
+                register_code(KC_LCTL);
+                CTLKEY_RESET = false;
+            } else {
+                if (timer_elapsed(key_timer) < TAPPING_TERM && !CTLKEY_RESET) {
+                    del_mods(MOD_MASK_CTRL);
+                    tap_code(KC_ESC);
+                } else {
+                    unregister_code(KC_LCTL);
+                }
+                CTLKEY_RESET = false;
+            }
+            return true;
+        }
+
+    case KC_HCTL:
+                 {
+                     static bool CTLKEY_REGISTERED;
+                     /* static uint16_t lcl_mod_state; */
+                     if (record->event.pressed) {
+                         if (mod_state & MOD_MASK_CTRL) {
+                             del_mods(MOD_MASK_CTRL);
+                             register_code(KC_BSPC);
+                             set_mods(mod_state);
+                             CTLKEY_REGISTERED = true;
+                             CTLKEY_RESET = true;
+                             return false;
+                         } else {
+                             register_code(KC_H);
+                             return false;
+                         }
+                     } else {
+                         if (CTLKEY_REGISTERED) {
+                             unregister_code(KC_BSPC);
+                             CTLKEY_REGISTERED = false;
+                             return false;
+                         } else {
+                             unregister_code(KC_H);
+                             return false;
+                         }
+                     }
+                     return true;
+                 }
     case CM_SCOL:
                 /* from https://github.com/precondition/dactyl-manuform-keymap */
                  {
                      static bool CTLKEY_REGISTERED;
                      static bool ALTKEY_REGISTERED;
-                     static uint16_t lcl_mod_state;
+                     /* static uint16_t lcl_mod_state; */
                      if (record->event.pressed) {
                          if (mod_state & MOD_MASK_CTRL) {
+                             /* lcl_mod_state = mod_state; */
                              /* del_mods(MOD_MASK_CTRL); */
-                             lcl_mod_state = mod_state;
-                             clear_mods();
-                             register_code16(KC_COLN);
+                             /* register_code16(LSFT(KC_SCLN)); */
+                             /* SEND_STRING(":"); */
+                             /* set_mods(mod_state); */
+                             /* clear */
+                             del_mods(MOD_MASK_CTRL);
+                             tap_code16(S(KC_SCLN));
+                             set_mods(mod_state);
                              CTLKEY_REGISTERED = true;
                              return false;
                          }  else if (mod_state & MOD_MASK_ALT) {
@@ -169,10 +270,8 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                          }
                      } else {
                          if (CTLKEY_REGISTERED) {
-                             unregister_code16(KC_COLN);
+                             /* unregister_code16(S(KC_SCLN)); */
                              CTLKEY_REGISTERED = false;
-                             /* set_mods(MOD_BIT(KC_LCTL)); */
-                             set_mods(lcl_mod_state);
                              return false;
                          } else if (ALTKEY_REGISTERED) {
                              unregister_code16(KC_QUOT);
@@ -239,10 +338,12 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 
 bool get_ignore_mod_tap_interrupt(uint16_t keycode, keyrecord_t *record) {
     switch (keycode) {
-        case LCTL_T(KC_ESC):
-            return false;
         case LALT_T(KC_TAB):
             return false;
+        case TD(LSFT_OSL3):
+            return false;
+        case TD(KC_FWIN):
+            return true;
         default:
             return true;
     }
@@ -251,8 +352,8 @@ bool get_ignore_mod_tap_interrupt(uint16_t keycode, keyrecord_t *record) {
 uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record) {
     switch (keycode) {
         case TD(LSFT_OSL3):
-            return 150;
-        case LCTL_T(KC_ESC):
+            return 100;
+        case TD(KC_FWIN):
             return 100;
         case LALT_T(KC_TAB):
             return 100;
@@ -261,22 +362,9 @@ uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record) {
     }
 }
 
-bool get_permissive_hold(uint16_t keycode, keyrecord_t *record) {
-    switch (keycode) {
-        case LCTL_T(KC_ESC):
-            return false;
-        case LALT_T(KC_TAB):
-            return false;
-        default:
-            return false;
-    }
-}
-
 bool get_retro_tapping(uint16_t keycode, keyrecord_t *record) {
     switch (keycode) {
-        case LGUI_T(KC_SPACE):
-            return true;
-        case LCTL_T(KC_ESC):
+        case LCTLESC:
             return false;
         case LALT_T(KC_TAB):
             return false;
@@ -290,9 +378,9 @@ bool get_retro_tapping(uint16_t keycode, keyrecord_t *record) {
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [0] = LAYOUT_60_iso_arrow(
         LT(2,KC_NUBS),   KC_1,   KC_2,      KC_3,        KC_4,       KC_5,    KC_6,    KC_7,   KC_8,         KC_9,      KC_0,      KC_MINS,          KC_EQL,      KC_BSPC,
-        LALT_T(KC_TAB),  KC_Q,   KC_W,      KC_E,        KC_R,       KC_T,    KC_LBRC, KC_RBRC,KC_Y,         KC_U,      KC_I,      KC_O,             RCTL_T(KC_P),    
-        LCTL_T(KC_ESC),  KC_A,   LT(4,KC_S),LT(1, KC_D), LT(2,KC_F), KC_G,    KC_NUHS, SP_ACC ,LT(2,KC_H),   LT(1,KC_J),LT(4,KC_K),KC_L,             CM_SCOL,     KC_SFTENT,
-        TD(LSFT_OSL3),   OSL(3), KC_Z,      KC_X,        KC_C,       KC_V,    KC_B,    KC_DOT, LT(3,KC_COMM),KC_N,      KC_M,      KC_DOT,           KC_SLSH,      KC_RSFT,
+        LALT_T(KC_TAB),  KC_Q,   KC_W,      KC_E,        KC_R,       KC_T,    KC_NO,   KC_NO,  KC_Y,         KC_U,      KC_I,      KC_O,             RCTL_T(KC_P),    
+        LCTLESC,         KC_A,   LT(4,KC_S),LT(1, KC_D), LT(2,KC_F), KC_G,    KC_NO,   KC_NO,  KC_HCTL,      LT(1,KC_J),LT(4,KC_K),KC_L,             CM_SCOL,     KC_SFTENT,
+        TD(LSFT_OSL3),   OSL(3), KC_Z,      KC_X,        KC_C,       KC_V,    KC_B,    KC_NO,  LT(3,KC_COMM),KC_N,      KC_M,      KC_DOT,           KC_SLSH,      KC_RSFT,
         LGUI(LSFT(KC_A)),LGUI(LCTL(KC_Q)),  CH_WIND,                          LGUI_T(KC_SPC),                MO(1),     KC_RGUI,   LGUI(LSFT(KC_4)), KC_DOWN,     KC_RGHT
     ),
     [1] = LAYOUT_60_iso_arrow(
@@ -305,22 +393,22 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [2] = LAYOUT_60_iso_arrow(
         KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,         KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_SLEP,
         KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,         KC_NO,   KC_NO,   KC_NO,   KC_VOLD, KC_VOLU, KC_MPRV, KC_MPLY, KC_MNXT,
-        KC_NO,   CH_WIND, KC_NO,   KC_NO,   CH_WIND,       KC_NO,   KC_NO,   KC_NO,   MI_LEFT, MI_DOWN, MI_UP,   MI_RGHT, KC_NO,   KC_NO,  
-        KC_NO,   KC_NO,   KC_NO,   KC_NO,   LCTL(KC_RBRC), KC_NO,   KC_NO,   KC_NO,   KC_TMUX, KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,  
+        KC_NO,   KC_NO,   KC_NO,   CH_WIND, KC_NO,         KC_NO,   KC_NO,   KC_NO,   MI_LEFT, MI_DOWN, MI_UP,   MI_RGHT, KC_NO,   KC_NO,  
+        KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,         KC_NO,   KC_NO,   KC_NO,   KC_TMUX, CH_WIND, LCTL(KC_RBRC),   KC_NO,   KC_NO,   KC_NO,  
         KC_NO,   KC_NO,   KC_NO,                                    LGUI(KC_SPC),              KC_NO,   KC_NO,   KC_NO,   KC_NO,   _______
     ),
     [3] = LAYOUT_60_iso_arrow(
         KC_NO,   KC_NO,         KC_NO,        KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,  
-        KC_NO,   KC_NO,         KC_NO,        A(KC_7), A(KC_8), KC_NO,   KC_NO,   KC_NO,   KC_LBRC, KC_GRV,  KC_NO,   KC_NO,   KC_NO,   
+        KC_NO,   KC_NO,         KC_NO,        A(KC_7), A(KC_8), KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_GRV,  KC_NO,   KC_LBRC, KC_NO,   
         KC_NO,   LALT(KC_COMM), LALT(KC_DOT), KC_LPRN, KC_RPRN, KC_NO,   KC_NO,   KC_NO,   KC_SLSH, KC_QUOT, KC_NUHS, KC_RBRC, KC_NO,   KC_NO,  
         KC_LSFT, KC_NO,         KC_NO,        KC_RBRC, A(KC_9), A(KC_0), KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,  
         KC_NO,   KC_NO,         KC_NO,                                   KC_NO,                     KC_NO,   KC_NO,   KC_NO,   KC_NO,   _______
     ),
     [4] = LAYOUT_60_iso_arrow(
-        KC_NO,   KC_NO,      KC_NO,      KC_NO,      KC_NO,         KC_NO,       KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,  
-        KC_NO,   LSFT(KC_1), LSFT(KC_2), LSFT(KC_3), LSFT(KC_4),    LSFT(KC_EQL),KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,  
-        KC_NO,   KC_NO,      LALT(KC_MINS), KC_NUBS, LALT(KC_RBRC), KC_NO,       KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,  
-        KC_NO,   KC_NO,      LSFT(KC_5), LSFT(KC_6), LSFT(KC_7),    LSFT(KC_8),  KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,  
-        KC_NO,   KC_NO,      KC_NO,                                              KC_NO,                     KC_NO,   KC_NO,   KC_NO,   KC_NO,   _______
+        KC_NO,   KC_NO,      KC_NO,      KC_NO,      KC_NO,         KC_NO,       KC_NO,   KC_NO,   KC_NO,   KC_NO,       KC_NO,  KC_NO,   KC_NO,   KC_NO,  
+        KC_NO,   LSFT(KC_1), LSFT(KC_2), LSFT(KC_3), LSFT(KC_4),    LSFT(KC_EQL),KC_NO,   KC_NO,   KC_NO,  LSFT(KC_MINS),KC_MINS,LSFT(KC_EQL), KC_EQL,  
+        KC_NO,   KC_CIRC,    LALT(KC_MINS), KC_NUBS, LALT(KC_RBRC), KC_NO,       KC_NO,   KC_NO,   KC_NO,   KC_NO,       KC_NO,  KC_NO,   KC_NO,   KC_NO,  
+        KC_NO,   KC_NO,      LSFT(KC_5), LSFT(KC_6), LSFT(KC_7),    LSFT(KC_8),  KC_NO,   KC_NO,   KC_NO,   KC_NO,       KC_NO,  KC_NO,   KC_NO,   KC_NO,  
+        KC_NO,   KC_NO,      KC_NO,                                              KC_NO,                     KC_NO,       KC_NO,  KC_NO,   KC_NO,   _______
     ),
 };

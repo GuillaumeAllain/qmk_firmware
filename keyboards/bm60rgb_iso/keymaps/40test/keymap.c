@@ -466,7 +466,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [4] = LAYOUT_60_iso_arrow(
             KC_NO,   KC_NO,      KC_NO,      KC_NO,      KC_NO,         KC_NO,       KC_NO,   KC_NO,   KC_NO,   KC_NO,       KC_NO,  KC_NO,   KC_NO,   KC_NO,  
             KC_NO,   LSFT(KC_1), LSFT(KC_2), LSFT(KC_3), LSFT(KC_4),    LSFT(KC_EQL), KC_NO,  LSFT(KC_MINS),KC_MINS,LSFT(KC_EQL), KC_EQL,  KC_NO,   KC_NO,  
-            KC_NO,   KC_BTIC,    LALT(KC_MINS), KC_NUBS, LALT(KC_RBRC), KC_NO,         KC_NO,   KC_NO,        KC_SCLN,LALT(KC_QUOT), KC_SCLN,       KC_NO,  KC_NO,   KC_NO, 
+            KC_NO,   KC_BTIC,    LALT(KC_MINS), KC_NUBS,  LALT(KC_QUOT), LALT(KC_RBRC),        KC_NO,   KC_NO,        KC_NO,KC_SCLN, KC_SCLN,       KC_NO,  KC_NO,   KC_NO, 
             KC_NO,   KC_NO,      LSFT(KC_5), LSFT(KC_6), LSFT(KC_7),    LSFT(KC_8),    KC_NO,   KC_NO,   KC_NO,       KC_NO,  KC_NO,   KC_NO,   KC_NO,  KC_NO, 
             KC_NO,   KC_NO,      KC_NO,                                              KC_NO,                     KC_NO,       KC_NO,  KC_NO,   KC_NO,   _______
             ),

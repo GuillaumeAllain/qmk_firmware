@@ -437,8 +437,8 @@ bool get_retro_tapping(uint16_t keycode, keyrecord_t *record) {
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [0] = LAYOUT_60_iso_arrow(
             LT(2,KC_NUBS),   KC_1,   KC_2,      KC_3,        KC_4,       KC_5,    KC_6,    KC_7,   KC_8,         KC_9,      KC_0,      KC_MINS,          KC_EQL,      KC_BSPC,
-            LALT_T(KC_TAB),  LALT_T(KC_Q),   LT(4,KC_W),     LCTL_T(KC_E),        KC_R,       KC_T,    KC_Y,         RCTL_T(KC_U),      KC_I,      KC_O,           RALT_T(KC_P),    KC_NO,   KC_NO,  
-            LCTLESC,         LT(5,KC_A),   LT(4,KC_S),LT(1, KC_D), LT(2,KC_F), KC_G,    KC_HCTL,      LT(1,KC_J),LT(4,KC_K),LT(2,KC_L),             KC_SFTENT,     KC_SFTENT, KC_NO,   KC_NO,  
+            LALT_T(KC_TAB),  LALT_T(KC_Q),   KC_W,     LCTL_T(KC_E),        KC_R,       KC_T,    KC_Y,         RCTL_T(KC_U),      KC_I,      KC_O,           RALT_T(KC_P),    KC_NO,   KC_NO,  
+            LCTLESC,         LT(4,KC_A),   LT(4,KC_S),LT(1, KC_D), LT(2,KC_F), KC_G,    KC_HCTL,      LT(1,KC_J),LT(4,KC_K),LT(2,KC_L),             KC_SFTENT,     KC_SFTENT, KC_NO,   KC_NO,  
             KC_NO,TD(LSFT_OSL3),    KC_Z,      KC_X,        KC_C,       KC_V,    LT(3,KC_B)   ,KC_N,      KC_MCTL,     KC_COMM,  RCTL_T(KC_DOT),           LGUI(LSFT(KC_4)),      KC_RSFT,KC_NO,  
             KC_NO,KC_NO,  LGUI(LSFT(KC_A)),                          LGUI_T(KC_SPC),                LGUI(LCTL(KC_Q)),     KC_RGUI,   LGUI(LSFT(KC_4)), KC_DOWN,     KC_RGHT
             ),
@@ -466,16 +466,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [4] = LAYOUT_60_iso_arrow(
             KC_NO,   KC_NO,      KC_NO,      KC_NO,      KC_NO,         KC_NO,       KC_NO,   KC_NO,   KC_NO,   KC_NO,       KC_NO,  KC_NO,   KC_NO,   KC_NO,  
             KC_NO,   LSFT(KC_1), LSFT(KC_2), LSFT(KC_3), LSFT(KC_4),    LSFT(KC_EQL), KC_NO,  LSFT(KC_MINS),KC_MINS,LSFT(KC_EQL), KC_EQL,  KC_NO,   KC_NO,  
-            KC_NO,   KC_BTIC,    LALT(KC_MINS), KC_NUBS,  LALT(KC_QUOT), LALT(KC_RBRC),        KC_NO,   KC_NO,        KC_NO,KC_SCLN, KC_SCLN,       KC_NO,  KC_NO,   KC_NO, 
+            KC_NO,   KC_BTIC,    LALT(KC_MINS), KC_NUBS,  LALT(KC_QUOT), LALT(KC_RBRC),        KC_BSPC,   KC_NO,     KC_NO,   LSFT(KC_SCLN), KC_SCLN,       KC_NO,  KC_NO,   KC_NO, 
             KC_NO,   KC_NO,      LSFT(KC_5), LSFT(KC_6), LSFT(KC_7),    LSFT(KC_8),    KC_NO,   KC_NO,   KC_NO,       KC_NO,  KC_NO,   KC_NO,   KC_NO,  KC_NO, 
             KC_NO,   KC_NO,      KC_NO,                                              KC_NO,                     KC_NO,       KC_NO,  KC_NO,   KC_NO,   _______
-            ),
-    [5] = LAYOUT_60_iso_arrow(
-            KC_NO,   KC_NO,         KC_NO,   KC_NO,   KC_NO,   KC_NO,         KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,  KC_NO,  KC_NO,  KC_NO,
-            KC_NO, KC_NO,         KC_NO,    KC_NO,    KC_NO,    KC_NO,            KC_NO,   KC_NO,  KC_NO,   KC_NO,   KC_NO,  KC_NO,   KC_NO,
-            KC_NO, KC_NO,          KC_NO,    KC_NO,    KC_NO,    KC_NO,            KC_BSPC, KC_NO, KC_NO,  LSFT(KC_SCLN),LSFT(KC_SCLN),   KC_NO,  KC_NO,   KC_NO,
-            KC_NO,KC_NO,          KC_NO,   KC_NO,    KC_NO,    KC_NO,          KC_NO,      KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO, KC_NO,  KC_NO,
-            KC_NO,   KC_NO,         KC_NO,                                    KC_NO,              KC_NO,   KC_NO,   KC_NO, KC_NO, KC_NO
             ),
 };
 

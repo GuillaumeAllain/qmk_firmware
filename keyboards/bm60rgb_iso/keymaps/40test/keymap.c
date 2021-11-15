@@ -438,7 +438,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [0] = LAYOUT_60_iso_arrow(
             LT(2,KC_NUBS),   KC_1,   KC_2,      KC_3,        KC_4,       KC_5,    KC_6,    KC_7,   KC_8,         KC_9,      KC_0,      KC_MINS,          KC_EQL,      KC_BSPC,
             LALT_T(KC_TAB),  LALT_T(KC_Q),   KC_W,     LCTL_T(KC_E),        KC_R,       KC_T,    KC_Y,         RCTL_T(KC_U),      KC_I,      KC_O,           RALT_T(KC_P),    KC_NO,   KC_NO,  
-            LCTLESC,       LCTL_T(KC_A),   LT(4,KC_S),LT(1, KC_D), LT(2,KC_F), KC_G,    LT(2,KC_H),      LT(1,KC_J),LT(4,KC_K),LT(2,KC_L),   KC_SFTENT,     KC_SFTENT, KC_NO,   KC_NO,  
+            LCTLESC,       LCTL_T(KC_A),   LT(4,KC_S),LT(1, KC_D), LT(2,KC_F), KC_G,    KC_HCTL,      LT(1,KC_J),LT(4,KC_K),LT(2,KC_L),   KC_SFTENT,     KC_SFTENT, KC_NO,   KC_NO,  
             KC_NO,KC_NO,    LSFT_T(KC_Z),      KC_X,        KC_C,       KC_V,    LT(3,KC_B)   ,KC_N,      KC_MCTL,     KC_COMM,  RCTL_T(KC_DOT),           LGUI(LSFT(KC_4)),      KC_RSFT,KC_NO,  
             KC_NO,KC_NO,  TD(LSFT_OSL3),                          LGUI_T(KC_SPC),                LGUI(LCTL(KC_Q)),     KC_RGUI,   LGUI(LSFT(KC_4)), KC_DOWN,     KC_RGHT
             ),

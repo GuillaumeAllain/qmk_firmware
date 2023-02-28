@@ -19,17 +19,17 @@
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 /* Base */
 [_QWERTY] = LAYOUT_all(
-  KC_ESC,  KC_1,    KC_2,    KC_3,    KC_4,    KC_5,    KC_6,    KC_7,    KC_8,    KC_9,    KC_0,    KC_MINS, KC_EQL,  KC_BSPC, KC_BSPC, KC_MPLY, 
-  KC_TAB,           KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,    KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,    KC_LBRC, KC_RBRC, KC_BSLS, CA_SCLN, 
-  KC_CTLE,          KC_A,    KC_S,    KC_D,    KC_F,    KC_G,    KC_H,    KC_J,    KC_K,    KC_L,    KC_SCLN, KC_QUOT,          KC_ENT,  CA_QUOT, 
-  KC_LSFT, KC_LSFT, KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,    KC_N,    KC_M,    KC_COMM, KC_DOT,  KC_SLSH, KC_RSFT,          KC_UP,   
+  KC_ESC,  KC_1,    KC_2,    KC_3,    KC_4,    KC_5,    KC_6,    KC_7,    KC_8,    KC_9,    KC_0,    KC_MINS, KC_EQL,  KC_BSPC, KC_BSPC, KC_MPLY,
+  KC_TAB,           KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,    KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,    KC_LBRC, KC_RBRC, KC_BSLS, CA_SCLN,
+  KC_CTLE,          KC_A,    KC_S,    KC_D,    KC_F,    KC_G,    KC_H,    KC_J,    KC_K,    KC_L,    KC_SCLN, KC_QUOT,          KC_ENT,  CA_QUOT,
+  KC_LSFT, KC_LSFT, KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,    KC_N,    KC_M,    KC_COMM, KC_DOT,  KC_SLSH, KC_RSFT,          KC_UP,
   KC_LCTL, KC_LGUI, KC_LALT,          LT_SPCF,           LT_SPCF,         LT_SPCF,        TD_TWIN, MO(_FN2_60), KC_GRV,  KC_LEFT, KC_DOWN, KC_RGHT
 ),
 [_DEFAULT] = LAYOUT_all(
-  KC_ESC,  KC_1,    KC_2,    KC_3,    KC_4,    KC_5,    KC_6,    KC_7,    KC_8,    KC_9,    KC_0,    KC_MINS, KC_EQL,  KC_BSPC, KC_BSPC, KC_MPLY, 
-  KC_TAB,           KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,    KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,    KC_LBRC, KC_RBRC, KC_BSLS, CA_SCLN, 
-  KC_CTLE,          KC_A,    KC_S,    KC_D,    KC_F,    KC_G,    KC_H,    KC_J,    KC_K,    KC_L,    KC_SCLN, KC_QUOT,          KC_ENT,  CA_QUOT, 
-  KC_LSFT, KC_LSFT, KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,    KC_N,    KC_M,    KC_COMM, KC_DOT,  KC_SLSH, KC_RSFT,          KC_UP,   
+  KC_ESC,  KC_1,    KC_2,    KC_3,    KC_4,    KC_5,    KC_6,    KC_7,    KC_8,    KC_9,    KC_0,    KC_MINS, KC_EQL,  KC_BSPC, KC_BSPC, KC_MPLY,
+  KC_TAB,           KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,    KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,    KC_LBRC, KC_RBRC, KC_BSLS, CA_SCLN,
+  KC_CTLE,          KC_A,    KC_S,    KC_D,    KC_F,    KC_G,    KC_H,    KC_J,    KC_K,    KC_L,    KC_SCLN, KC_QUOT,          KC_ENT,  CA_QUOT,
+  KC_LSFT, KC_LSFT, KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,    KC_N,    KC_M,    KC_COMM, KC_DOT,  KC_SLSH, KC_RSFT,          KC_UP,
   KC_LCTL, KC_LGUI, KC_LALT,          LT_SPCF,           LT_SPCF,         LT_SPCF,        TD_TWIN, MO(_FN2_60), KC_GRV,  KC_LEFT, KC_DOWN, KC_RGHT
 ),
 [_FN1_60] = LAYOUT_all(
@@ -41,29 +41,26 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 ),
 [_FN2_60] = LAYOUT_all(
   RGB_TOG,   RGB_MOD,     RGB_VAD,    RGB_VAI,    RGB_SAI,    RGB_HUD,    RGB_HUI,    _______,    _______,    _______,    _______,    _______,    _______,    _______,    _______,    _______,
-  _______,                _______,    _______,    _______,    _______,    _______,    _______,    _______,    _______,    _______,    _______,    _______,    _______,    RESET,      _______,
+  _______,                _______,    _______,    _______,    _______,    _______,    _______,    _______,    _______,    _______,    _______,    _______,    _______,    QK_BOOT,    _______,
   _______,                _______,    _______,    _______,    _______,    _______,    _______,    _______,    _______,    _______,    _______,    _______,                KC_MAKE,    _______,
-  _______,    _______,    _______,    _______,    _______,    _______,    _______,    _______,    _______,    _______,    _______,    _______,    _______,                _______,    
+  _______,    _______,    _______,    _______,    _______,    _______,    _______,    _______,    _______,    _______,    _______,    _______,    _______,                _______,
   _______,    _______,    _______,                _______,                _______,                _______,                _______,    _______,    _______,    _______,    _______,    TG(_DEFAULT)
 )
 
 };
 
 
-void rgb_matrix_indicators_user(void) {
+bool rgb_matrix_indicators_user(void) {
   uint8_t layer = get_highest_layer(layer_state);
   switch (layer) {
-    case _QWERTY:
-      rgb_matrix_set_color(10, 0, 0, 0); 
-      break;
     case _FN1_60:
-      rgb_matrix_set_color(10, 0, 0, 255); 
+      rgb_matrix_set_color(10, 0, 0, 255);
       break;
     case _FN2_60:
-      rgb_matrix_set_color(10, 255, 255, 255); 
+      rgb_matrix_set_color(10, 255, 255, 255);
       break;
     case _DEFAULT:
-      rgb_matrix_set_color(10, 0, 255, 0); 
+      rgb_matrix_set_color(10, 0, 255, 0);
       break;
     default:
       break;
@@ -71,6 +68,7 @@ void rgb_matrix_indicators_user(void) {
   if (host_keyboard_led_state().caps_lock) {
         rgb_matrix_set_color(10, 255, 0, 0);
   }
+    return false;
 }
 
 void matrix_init_kb(void){
@@ -80,10 +78,10 @@ void matrix_init_kb(void){
   g_led_config = (led_config_t){ {
     // Key Matrix to LED Index
     { 10    , 10    , 9     , 9     , 8     , 7     , 7     , 6     , 5     , 5     , 4     , 3     , 3     , 2     , 1     , 1      },
-    { NO_LED, 11    , NO_LED, NO_LED, NO_LED, NO_LED, NO_LED, NO_LED, NO_LED, NO_LED, NO_LED, NO_LED, NO_LED, NO_LED, 0     , 1      },
-    { NO_LED, 12    , NO_LED, NO_LED, NO_LED, NO_LED, NO_LED, NO_LED, NO_LED, NO_LED, NO_LED, NO_LED, NO_LED, NO_LED, 23    , 1      },
-    { NO_LED, 13    , 14    , NO_LED, 15    , 16    , NO_LED, 17    , 18    , NO_LED, 19    , 20    , NO_LED, 21    , 22    , NO_LED },
-    { NO_LED, NO_LED, NO_LED, NO_LED, NO_LED, NO_LED, NO_LED, NO_LED, NO_LED, NO_LED, NO_LED, NO_LED, NO_LED, NO_LED, NO_LED, NO_LED },
+    { 11    , 11    , 9     , 9     , 8     , 7     , 7     , 6     , 5     , 5     , 4     , 3     , 3     , 2     , 0     , 1      },
+    { 12    , 12    , 9     , 9     , 8     , 7     , 7     , 6     , 5     , 5     , 4     , 3     , 3     , 2     , 23    , 1      },
+    { 13    , 13    , 14    , 14    , 15    , 16    , 16    , 17    , 18    , 18    , 19    , 20    , 20    , 21    , 22    , 22     },
+    { 13    , 13    , 14    , 14    , 15    , 16    , 16    , 17    , 18    , 18    , 19    , 20    , 20    , 21    , 22    , 22     },
   }, {
     // LED Index to Physical Position
     {224, 42}, {224, 21}, {209, 21}, {179, 21}, {164, 21}, {134, 21}, {119, 21}, {89, 21}, {74, 21}, {45, 21}, {30, 21}, {30, 42},
